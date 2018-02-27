@@ -1,0 +1,18 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.crazypig.demo.grpc.hw.rpc";
+
+service HelloService {
+	rpc sayHello (HelloRequest) returns (HelloResponse) {}
+	rpc sayClientSideStreamHello (stream HelloRequest) returns (HelloResponse) {}
+	rpc sayServerSideStreamHello (HelloRequest) returns (stream HelloResponse) {}
+	rpc sayBothSideStreamHello (stream HelloRequest) returns (stream HelloResponse) {}
+}
+
+message HelloRequest {
+	string name = 1;
+}
+
+message HelloResponse {
+	string message = 1;
+}
