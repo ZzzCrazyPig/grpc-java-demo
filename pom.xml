@@ -19,6 +19,7 @@
 	<modules>
 		<module>helloworld</module>
 		<module>error-handling</module>
+		<module>interceptor</module>
 	</modules>
 
 	<dependencyManagement>
