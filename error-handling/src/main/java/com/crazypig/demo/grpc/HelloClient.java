@@ -1,5 +1,8 @@
 package com.crazypig.demo.grpc;
 
+import java.util.concurrent.TimeUnit;
+
+import com.crazypig.demo.grpc.service.HelloDeadlineRequest;
 import com.crazypig.demo.grpc.service.HelloRequest;
 import com.crazypig.demo.grpc.service.HelloResponse;
 import com.crazypig.demo.grpc.service.HelloServiceGrpc;
@@ -26,6 +29,14 @@ public class HelloClient {
 		return response;
 	}
 	
+	public HelloResponse sayHelloDeadline() {
+		HelloDeadlineRequest request = HelloDeadlineRequest.newBuilder().setClientDeadlineTimeInSeconds(3)
+				.setName("CrazyPig").build();
+		// set service call deadline
+		HelloResponse response = blockingStub.withDeadlineAfter(3, TimeUnit.SECONDS).sayHelloDeadline(request);
+		return response;
+	}
+	
 	public void stop() {
 		channel.shutdown();
 	}
@@ -36,13 +47,19 @@ public class HelloClient {
 		try {
 			client.sayHello();
 		} catch (Throwable e) {
+			e.printStackTrace();
 			Status status = Status.fromThrowable(e);
 			Verify.verify(status.getCode() == Status.Code.UNKNOWN);
-			e.printStackTrace();
+		}
+		
+		try {
+			client.sayHelloDeadline();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			Status status = Status.fromThrowable(t);
+			Verify.verify(status.getCode() == Status.Code.DEADLINE_EXCEEDED);
 		} finally {
-			if (client != null) {
-				client.stop();
-			}
+			client.stop();
 		}
 		
 	}

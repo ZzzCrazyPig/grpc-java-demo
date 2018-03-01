@@ -5,10 +5,16 @@ option java_outer_classname = "HelloServiceOuterClass";
 
 service HelloService {
 	rpc sayHello (HelloRequest) returns (HelloResponse) {}
+	rpc sayHelloDeadline (HelloDeadlineRequest) returns (HelloResponse) {}
 }
 
 message HelloRequest {
 	string name = 1;
+}
+
+message HelloDeadlineRequest {
+	string name = 1;
+	int32 clientDeadlineTimeInSeconds = 2;
 }
 
 message HelloResponse {
