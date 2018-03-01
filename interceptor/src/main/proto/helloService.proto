@@ -4,10 +4,16 @@ option java_multiple_files = true;
 
 service HelloService {
 	rpc sayHello (HelloRequest) returns (HelloResponse) {}
+	rpc sayHelloDeadline (HelloDeadlineRequest) returns (HelloResponse) {}
 }
 
 message HelloRequest {
 	string name = 1;
+}
+
+message HelloDeadlineRequest {
+	string name = 1;
+	int32 deadlineInSeconds = 2;
 }
 
 message HelloResponse {

@@ -1,6 +1,7 @@
 package com.crazypig.demo.grpc.interceptor;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import io.grpc.CallOptions;
 import io.grpc.Channel;
@@ -20,6 +21,10 @@ public class HelloClientInterceptor implements ClientInterceptor {
 	@Override
 	public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> method,
 			CallOptions callOptions, Channel next) {
+		
+		// set call deadline
+		callOptions = callOptions.withDeadlineAfter(3, TimeUnit.SECONDS);
+		
 		return new SimpleForwardingClientCall<ReqT, RespT>(next.newCall(method, callOptions)) {
 
 			@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -1,6 +1,7 @@
 package com.crazypig.demo.grpc;
 
 import com.crazypig.demo.grpc.interceptor.HelloClientInterceptor;
+import com.crazypig.demo.grpc.service.HelloDeadlineRequest;
 import com.crazypig.demo.grpc.service.HelloRequest;
 import com.crazypig.demo.grpc.service.HelloResponse;
 import com.crazypig.demo.grpc.service.HelloServiceGrpc;
@@ -30,6 +31,12 @@ public class HelloClient {
 		return response;
 	}
 	
+	public HelloResponse sayHelloDeadline() {
+		HelloDeadlineRequest request = HelloDeadlineRequest.newBuilder().setName("CrazyPig").setDeadlineInSeconds(3).build();
+		HelloResponse response = blockingStub.sayHelloDeadline(request);
+		return response;
+	}
+	
 	public void stop() {
 		channel.shutdown();
 	}
@@ -41,11 +48,27 @@ public class HelloClient {
 		
 		HelloClient illegalClient = new HelloClient("127.0.0.1", 8888, true);
 		sayHelloAndThenStop(illegalClient);
+		
+		HelloClient deadlineClient = new HelloClient("127.0.0.1", 8888, false);
+		sayHelloDeadlineAndThenStop(deadlineClient);
+		
 	}
 	
 	private static void sayHelloAndThenStop(HelloClient client) {
 		try {
 			client.sayHello();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		} finally {
+			if (client != null) {
+				client.stop();
+			}
+		}
+	}
+	
+	private static void sayHelloDeadlineAndThenStop(HelloClient client) {
+		try {
+			client.sayHelloDeadline();
 		} catch (Throwable e) {
 			e.printStackTrace();
 		} finally {
