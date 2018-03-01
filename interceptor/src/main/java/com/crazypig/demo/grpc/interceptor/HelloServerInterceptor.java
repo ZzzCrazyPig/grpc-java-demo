@@ -25,6 +25,7 @@ public class HelloServerInterceptor implements ServerInterceptor {
 		// illegal client token, close the server call with special status
 		if (isClientTokenIllegal(clientToken)) {
 			call.close(Status.ABORTED.withDescription("illegal CLIENT_TOKEN"), headers);
+			return new Listener<ReqT>() {};
 		}
 		System.out.println("receive client token : " + String.valueOf(clientToken));
 		return next.startCall(new SimpleForwardingServerCall<ReqT, RespT>(call) {
